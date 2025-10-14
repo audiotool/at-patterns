@@ -31,11 +31,17 @@ export function _beatbox8(devName, globals, devices, queues) {
 	device.clone = function(cls) {
 	    let newName = device.name + "_clone";
 	    let cloneDev = _beatbox8(newName, globals, devices, queues);
+
+	    // transfer relevant data
 	    cloneDev.rawPattern = device.rawPattern;
 	    cloneDev.effectivePattern = device.effectivePattern;
+
+	    // update the new device
 	    queue.push(async function() {		
 		await cloneDev._update(device, globals);		
 	    })
+	    
+	    // call the clone modifiers
 	    cls(cloneDev);
 	}
 	
@@ -90,9 +96,8 @@ export function _beatbox8(devName, globals, devices, queues) {
 }
 
 // INNER FUNCTIONS
-
 async function createBeatbox8(devName, device, globals) {
-    console.log("[at-script] inner create beatbox");
+    
     await globals.nexus.modify((t) => {
 	// create a beatbox8
 	const beatbox8 = t.create("beatbox8", {});
