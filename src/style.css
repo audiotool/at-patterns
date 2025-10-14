@@ -60,7 +60,6 @@ h1 {
 }
 
 .settings {
-    padding: 2em;
     display:grid;
     grid-template-columns: max-content max-content;
     grid-gap:5px;
@@ -68,6 +67,17 @@ h1 {
 
 div.settings label       { text-align:right; }
 div.settings label:after { content: ":"; }
+
+.cm-editor {
+    text-align: left;
+    padding-bottom: 20px;
+}
+
+.code-editor {
+    width: 60%;
+    height: 40%;
+
+}
 
 .read-the-docs {
   color: #888;

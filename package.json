@@ -12,6 +12,8 @@
     "vite": "^7.1.2"
   },
   "dependencies": {
-    "@audiotool/nexus": "file:audiotool-nexus-0.0.4.tgz"
+    "@audiotool/nexus": "file:audiotool-nexus-0.0.4.tgz",
+    "@codemirror/lang-javascript": "^6.2.4",
+    "codemirror": "^6.0.2"
   }
 }
