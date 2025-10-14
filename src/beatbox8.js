@@ -10,11 +10,35 @@ export function _beatbox8(devName, globals, devices, queues) {
 	
 	var device = {};
 	var queue = [];
+
+	device.name = devName;
 	
 	queue.push(async function() {
 	    return createBeatbox8(devName, device, globals)	    
 	});
 
+	// EVERY DEVICE NEEDS TO IMPLEMENT THIS
+	device._update = async function(device, globals) {
+	    await updateBeatbox8Pattern(device, globals);
+	}
+
+	///////////
+	// CLONE //
+	///////////
+
+	// not sure yet how to do a generic way for that ... 
+	
+	device.clone = function(cls) {
+	    let newName = device.name + "_clone";
+	    let cloneDev = _beatbox8(newName, globals, devices, queues);
+	    cloneDev.rawPattern = device.rawPattern;
+	    cloneDev.effectivePattern = device.effectivePattern;
+	    queue.push(async function() {		
+		await cloneDev._update(device, globals);		
+	    })
+	    cls(cloneDev);
+	}
+	
 	/////////////////////////////////
 	// BEATBOX 8 PATTERN INTERFACE //
 	/////////////////////////////////
@@ -22,10 +46,11 @@ export function _beatbox8(devName, globals, devices, queues) {
 	// create a callback to evaluate the pattern string        
 	device.pattern = function(pattern) {
 	    device.rawPattern = pattern;
+	    device.effectivePattern = pattern;
 	    
 	    // ASYNC PART FOR NEXUS MODIFICATION, executed later
 	    queue.push(async function() {		
-		await updatePattern(device, pattern, globals);		
+		await device._update(device, globals);		
 	    })
 
 	    // pass on device for function chaining
@@ -45,11 +70,11 @@ export function _beatbox8(devName, globals, devices, queues) {
 		arr.push(char);	    
 	    }
 	    
-	    shiftedPattern = arr.join("");	
+	    device.effectivePattern = arr.join("");	
 	    
 	    // ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
 	    queue.push(async function() {	
-		await updatePattern(device, shiftedPattern, globals);
+		await device._update(device, globals);
 	    });
 
 	    // pass on device for function chaining
@@ -114,139 +139,138 @@ async function createBeatbox8(devName, device, globals) {
 	device.id = beatbox8.id;
 	device.pattern_id = beatbox8pattern.id;
     });
-               
+    
     return device;
 }
 
 // parse the string and update the pattern
-export async function updatePattern(device, pattern, globals) {
+export async function updateBeatbox8Pattern(device, globals) {
     await globals.nexus.modify((t) => {
-	    // pattern "parser" ...
-	    let chars = pattern.split("");	    
-	    let pat = t.entities.getEntity(device.pattern_id);
+	// pattern "parser" ...
+	let chars = device.effectivePattern.split("");	    
+	let pat = t.entities.getEntity(device.pattern_id);
 
-	    // update the pattern length
-	    t.update(pat.fields.length, chars.length);
+	// update the pattern length
+	t.update(pat.fields.length, chars.length);
 
-	    // update the pattern steps according to the characters in the string
-	    chars.forEach((c,i) => {	    
-		switch (c) {
-		case 'x':  {
-		    
-		    t.update(pat.fields.steps.array[i].fields.accent, false);
+	// update the pattern steps according to the characters in the string
+	chars.forEach((c,i) => {	    
+	    switch (c) {
+	    case 'x':  {		    
+		t.update(pat.fields.steps.array[i].fields.accent, false);
 
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], true);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
-		    
-		    break;
-		}
-		case 'o': {
-		    t.update(pat.fields.steps.array[i].fields.accent, false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], true);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		
+		break;
+	    }
+	    case 'o': {
+		t.update(pat.fields.steps.array[i].fields.accent, false);
 
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], true);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
-		    break;
-		}
-		case 'X': {
-		    t.update(pat.fields.steps.array[i].fields.accent, true);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], true);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		break;
+	    }
+	    case 'X': {
+		t.update(pat.fields.steps.array[i].fields.accent, true);
 
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], true);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
-		    break;
-		}
-		case 'O': {
-		    t.update(pat.fields.steps.array[i].fields.accent, true);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], true);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		break;
+	    }
+	    case 'O': {
+		t.update(pat.fields.steps.array[i].fields.accent, true);
 
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], true);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
-		    break;
-		}
-		case 'C': {
-		    t.update(pat.fields.steps.array[i].fields.accent, true);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], true);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		break;
+	    }
+	    case 'C': {
+		t.update(pat.fields.steps.array[i].fields.accent, true);
 
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], true);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
-		    break;
-		}
-		case 'c': {
-		    t.update(pat.fields.steps.array[i].fields.accent, false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], true);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		break;
+	    }
+	    case 'c': {
+		t.update(pat.fields.steps.array[i].fields.accent, false);
 
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], true);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
-		    break;
-		}
-		case '-': {
-		    t.update(pat.fields.steps.array[i].fields.accent, false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], true);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		break;
+	    }
+	    case '-': {
+		t.update(pat.fields.steps.array[i].fields.accent, false);
 
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
-		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
-		    break;
-		}				
-		default: console.log(c)
-		}
-	    });	    	    	    	    	    
-	});	
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		break;
+	    }				
+	    default: console.log(c)
+	    }
+	});	    	    	    	    	    
+    });	
 }
