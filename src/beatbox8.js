@@ -1,0 +1,252 @@
+// DEVICE CONSTRUCTOR
+export function _beatbox8(devName, globals, devices, queues) {
+
+    // create device queues            
+    if (devices[devName]) {
+	console.log("[at-script] beatbox8 with name " + devName + " already exists!")
+	return devices[devName];	
+    } else {		
+	console.log("[at-script] create beatbox8 with name " + devName);
+	
+	var device = {};
+	var queue = [];
+	
+	queue.push(async function() {
+	    return createBeatbox8(devName, device, globals)	    
+	});
+
+	/////////////////////////////////
+	// BEATBOX 8 PATTERN INTERFACE //
+	/////////////////////////////////
+	
+	// create a callback to evaluate the pattern string        
+	device.pattern = function(pattern) {
+	    device.rawPattern = pattern;
+	    
+	    // ASYNC PART FOR NEXUS MODIFICATION, executed later
+	    queue.push(async function() {		
+		await updatePattern(device, pattern, globals);		
+	    })
+
+	    // pass on device for function chaining
+	    return device;
+	}
+
+	// shift the pattern left by n steps
+	device.shift_right = function(n) {
+	    var shiftedPattern = device.rawPattern;
+
+	    var arr = shiftedPattern.split("");
+	    
+	    var i;
+
+	    for(i = 0; i < n; i++) {
+		var char = arr.shift();
+		arr.push(char);	    
+	    }
+	    
+	    shiftedPattern = arr.join("");	
+	    
+	    // ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	    queue.push(async function() {	
+		await updatePattern(device, shiftedPattern, globals);
+	    });
+
+	    // pass on device for function chaining
+	    return device;
+	}
+
+	devices[devName] = device;
+	queues[devName] = queue;	
+    }
+
+    // pass on device for function chaining
+    return device
+}
+
+// INNER FUNCTIONS
+
+async function createBeatbox8(devName, device, globals) {
+    console.log("[at-script] inner create beatbox");
+    await globals.nexus.modify((t) => {
+	// create a beatbox8
+	const beatbox8 = t.create("beatbox8", {});
+
+	// this creates an (empty) pattern for the beatbox8
+	const beatbox8pattern = t.create("beatbox8Pattern", {
+	    // patterns point to a "pattern slot", an empty field in an array. Here we attach it to slot 1. There can be
+	    // at most 1 pattern per slot. 
+	    slot: beatbox8.fields.patterns.array[0].location,	
+	});
+	
+	// this places the beatbox on the desktop (random location)
+	let x =
+	    t.create("desktopPlacement", {
+		entity: beatbox8.location,
+		x: Math.round(Math.random() * 1000),
+		y: Math.round(Math.random() * 1000),
+	    });
+
+	// connect the beatbox to the first channel that doesn't have
+	// something pointing to its audio input
+	const firstFreeChannel = t.entities
+	      .ofTypes("mixerChannel")
+	      .get()
+	      .filter(
+		  (channel) =>
+		  t.entities.pointingTo
+		      .locations(channel.fields.audioInput.location)
+		      .get().length === 0
+	      )[0];
+
+	// as for this example we expect a free channel to be there on the given
+	// project
+	if (firstFreeChannel === undefined) {
+	    console.error("[at-script] can't create device, no free channel")
+	}
+	
+	t.create("audioConnection", {
+	    fromSocket: beatbox8.fields.audioOutput.location,
+	    toSocket: firstFreeChannel.fields.audioInput.location,
+	})
+
+	// keep the IDs so we can fill the pattern later on ...
+	device.id = beatbox8.id;
+	device.pattern_id = beatbox8pattern.id;
+    });
+               
+    return device;
+}
+
+// parse the string and update the pattern
+export async function updatePattern(device, pattern, globals) {
+    await globals.nexus.modify((t) => {
+	    // pattern "parser" ...
+	    let chars = pattern.split("");	    
+	    let pat = t.entities.getEntity(device.pattern_id);
+
+	    // update the pattern length
+	    t.update(pat.fields.length, chars.length);
+
+	    // update the pattern steps according to the characters in the string
+	    chars.forEach((c,i) => {	    
+		switch (c) {
+		case 'x':  {
+		    
+		    t.update(pat.fields.steps.array[i].fields.accent, false);
+
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], true);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		    
+		    break;
+		}
+		case 'o': {
+		    t.update(pat.fields.steps.array[i].fields.accent, false);
+
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], true);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		    break;
+		}
+		case 'X': {
+		    t.update(pat.fields.steps.array[i].fields.accent, true);
+
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], true);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		    break;
+		}
+		case 'O': {
+		    t.update(pat.fields.steps.array[i].fields.accent, true);
+
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], true);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		    break;
+		}
+		case 'C': {
+		    t.update(pat.fields.steps.array[i].fields.accent, true);
+
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], true);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		    break;
+		}
+		case 'c': {
+		    t.update(pat.fields.steps.array[i].fields.accent, false);
+
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], true);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		    break;
+		}
+		case '-': {
+		    t.update(pat.fields.steps.array[i].fields.accent, false);
+
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[0], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[1], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[2], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[3], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[4], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[5], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[6], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[7], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[8], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[9], false);
+		    t.update(pat.fields.steps.array[i].fields.activeInstruments.array[10], false);
+		    break;
+		}				
+		default: console.log(c)
+		}
+	    });	    	    	    	    	    
+	});	
+}
