@@ -1,11 +1,11 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: mononoki;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #fff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -28,6 +28,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #def;
 }
 
 h1 {
@@ -70,13 +71,16 @@ div.settings label:after { content: ":"; }
 
 .cm-editor {
     text-align: left;
+    
+    background-color: #fff;
     padding-bottom: 20px;
 }
 
 .code-editor {
+    
     width: 60%;
     height: 40%;
-
+    padding-bottom: 20px;
 }
 
 .read-the-docs {
