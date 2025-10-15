@@ -1,4 +1,5 @@
 import {notesFromString} from "./utils.js";
+import {lshift, rshift, reverse} from "./string_operations.js"
 
 // DEVICE CONSTRUCTOR
 export function _pulverisateur(devName, globals, devices, queues) {
@@ -6,6 +7,7 @@ export function _pulverisateur(devName, globals, devices, queues) {
     // create device queues            
     if (devices[devName]) {
 	console.log("[at-script] pulverisateur with name " + devName + " already exists!")
+	devices[devName]._reset();
 	return devices[devName];	
     } else {		
 	console.log("[at-script] create pulverisateur with name " + devName);
@@ -25,6 +27,12 @@ export function _pulverisateur(devName, globals, devices, queues) {
 	    await updatePulverisateurNotes(device, globals);
 	}
 
+	device._reset = function() {
+	    device.noteString = "";
+	    device.effectiveNoteString = null;
+	    device.preset = "";
+	}
+
 	///////////
 	// CLONE //
 	///////////
@@ -38,7 +46,8 @@ export function _pulverisateur(devName, globals, devices, queues) {
 	    // transfer relevant data 
 	    cloneDev.preset = device.preset;
 	    cloneDev.noteString = device.noteString;
-	    
+	    cloneDev.effectiveNoteString = device.effectiveNoteString;
+	    	    
 	    queue.push(async function() {		
 		await cloneDev._update(device, globals);		
 	    })
@@ -69,13 +78,49 @@ export function _pulverisateur(devName, globals, devices, queues) {
 
 	device.notes = function(notes) {
 	    device.noteString = notes;
-	    
+	    	    
 	    // ASYNC PART FOR NEXUS MODIFICATION, executed later
 	    queue.push(async function() {		
 		await device._update(device, globals);		
 	    })
 
 	    // pass on device for function chaining
+	    return device;
+	}
+
+	// reverse notes
+	device.reverse = function() {	    
+	    device.effectiveNoteString = reverse(device.effectiveNoteString ?? device.noteString, " ");	
+	    
+	    // ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	    queue.push(async function() {	
+		await device._update(device, globals);
+	    });
+	    
+	    return device;
+	}
+
+	// shift left
+	device.lshift = function(n) {
+	    device.effectiveNoteString = lshift(device.effectiveNoteString ?? device.noteString, " ", n);
+	    
+	    // ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	    queue.push(async function() {	
+		await device._update(device, globals);
+	    });
+	    
+	    return device;
+	}
+
+	// shift right
+	device.rshift = function(n) {
+	    device.effectiveNoteString = rshift(device.effectiveNoteString ?? device.noteString, " ", n);	
+	    
+	    // ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	    queue.push(async function() {	
+		await device._update(device, globals);
+	    });
+	    
 	    return device;
 	}
 	
@@ -158,6 +203,12 @@ async function createPulverisateur(devName, device, globals) {
 
 
 async function updatePulverisateurPreset(device, globals) {
+
+    // nothing to do ...
+    if (device.preset === "") {
+	return;
+    }
+    
     const presets = await globals.client.api.presets.list(
 	// entity type to find a preset for. Not all entities are supported.
 	"pulverisateur",
@@ -174,14 +225,20 @@ async function updatePulverisateurPreset(device, globals) {
 }
 
 async function updatePulverisateurNotes(device, globals) {
+        
     // delete current content
     await globals.nexus.modify((t) => { 
 	device.noteIds.forEach((i) => t.remove(i));
 	device.noteIds = []
     });
 
+    // nothing to do ...
+    if (device.noteString === "") {
+	return;
+    }
+    
     // create new notes
-    var noteEntities = notesFromString(device.noteString, device.noteCollectionLocation);
+    var noteEntities = notesFromString(device.effectiveNoteString ?? device.noteString, device.noteCollectionLocation);
     await globals.nexus.modify((t) => { 
 	noteEntities.forEach((n) => {
 	    let nc = t.create("note", n);
