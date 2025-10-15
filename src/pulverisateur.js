@@ -1,3 +1,5 @@
+import {notesFromString} from "./utils.js";
+
 // DEVICE CONSTRUCTOR
 export function _pulverisateur(devName, globals, devices, queues) {
 
@@ -20,6 +22,7 @@ export function _pulverisateur(devName, globals, devices, queues) {
 	// EVERY DEVICE NEEDS TO IMPLEMENT THIS
 	device._update = async function(device, globals) {
 	    await updatePulverisateurPreset(device, globals);
+	    await updatePulverisateurNotes(device, globals);
 	}
 
 	///////////
@@ -34,6 +37,7 @@ export function _pulverisateur(devName, globals, devices, queues) {
 
 	    // transfer relevant data 
 	    cloneDev.preset = device.preset;
+	    cloneDev.noteString = device.noteString;
 	    
 	    queue.push(async function() {		
 		await cloneDev._update(device, globals);		
@@ -49,7 +53,7 @@ export function _pulverisateur(devName, globals, devices, queues) {
 	// create a callback to evaluate the pattern string        
 	device.preset = function(preset) {
 	    device.presetName = preset;
-	    	    
+	    
 	    // ASYNC PART FOR NEXUS MODIFICATION, executed later
 	    queue.push(async function() {		
 		await device._update(device, globals);		
@@ -59,6 +63,22 @@ export function _pulverisateur(devName, globals, devices, queues) {
 	    return device;
 	}
 
+	//////////////////////////
+	// PULV NOTES INTERFACE //
+	//////////////////////////
+
+	device.notes = function(notes) {
+	    device.noteString = notes;
+	    
+	    // ASYNC PART FOR NEXUS MODIFICATION, executed later
+	    queue.push(async function() {		
+		await device._update(device, globals);		
+	    })
+
+	    // pass on device for function chaining
+	    return device;
+	}
+	
 	devices[devName] = device;
 	queues[devName] = queue;	
     }
@@ -72,7 +92,7 @@ async function createPulverisateur(devName, device, globals) {
     await globals.nexus.modify((t) => {
 	// create a pulverisateur
 	const pulverisateur = t.create("pulverisateur", {});
-		
+	
 	// this places the beatbox on the desktop (random location)
 	let x =
 	    t.create("desktopPlacement", {
@@ -105,7 +125,31 @@ async function createPulverisateur(devName, device, globals) {
 	    toSocket: firstFreeChannel.fields.audioInput.location,
 	})
 
+	// create note track, collection. region ...
+	const noteTrack = t.create("noteTrack", {
+	    player: pulverisateur.location,
+	});
+	
+	const noteCollection = t.create("noteCollection", {})
+	const noteRegion = t.create("noteRegion", {
+	    track: noteTrack.location,
+	    region: {
+		colorIndex: 0,
+		positionTicks: 0,
+		durationTicks: 15360 * 2 ,
+		loopDurationTicks: 15360 * 2,
+		loopOffsetTicks: 0,
+		enabled: true,
+		displayName: devName + "Notes",
+	    },
+	    noteCollection: noteCollection.location,
+	})
+
 	// keep the IDs so we can fill the pattern later on ...
+	device.noteCollectionId = noteCollection.id;
+	device.noteCollectionLocation = noteCollection.location;
+	device.noteIds = [];
+	
 	device.id = pulverisateur.id;
     });
     
@@ -126,5 +170,22 @@ async function updatePulverisateurPreset(device, globals) {
     await globals.nexus.modify((t) => { 
 	let pulv = t.entities.getEntity(device.id);
 	t.applyPresetTo(pulv, pulvPreset);	
+    });
+}
+
+async function updatePulverisateurNotes(device, globals) {
+    // delete current content
+    await globals.nexus.modify((t) => { 
+	device.noteIds.forEach((i) => t.remove(i));
+	device.noteIds = []
+    });
+
+    // create new notes
+    var noteEntities = notesFromString(device.noteString, device.noteCollectionLocation);
+    await globals.nexus.modify((t) => { 
+	noteEntities.forEach((n) => {
+	    let nc = t.create("note", n);
+	    device.noteIds.push(nc.id);
+	})
     });
 }

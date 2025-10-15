@@ -149,7 +149,7 @@ async function createBeatbox8(devName, device, globals) {
 }
 
 // parse the string and update the pattern
-export async function updateBeatbox8Pattern(device, globals) {
+async function updateBeatbox8Pattern(device, globals) {
     await globals.nexus.modify((t) => {
 	// pattern "parser" ...
 	let chars = device.effectivePattern.split("");	    

@@ -23,3 +23,8 @@ because then we might be able to add time-based modifications (i.e. "every 2 bar
 * run `npm install` 
 * run `npm run dev` 
 
+## Random Ideas:
+
+* `playLoop` to play a loop of various length (if that is available at some point)
+* parameter automation pattern as pattern ?
+* note region length of device note regions 
