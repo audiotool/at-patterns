@@ -181,11 +181,11 @@ async function createPulverisateur(devName, device, globals) {
 	    region: {
 		colorIndex: 0,
 		positionTicks: 0,
-		durationTicks: 15360 * 2 ,
-		loopDurationTicks: 15360 * 2,
+		durationTicks: 15360 * 1 ,
+		loopDurationTicks: 15360 * 1,
 		loopOffsetTicks: 0,
 		enabled: true,
-		displayName: devName + "Notes",
+		displayName: devName + "-Notes",
 	    },
 	    noteCollection: noteCollection.location,
 	})
