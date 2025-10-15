@@ -58,10 +58,9 @@ async function clone_beatbox8(device, devices, queues, globals, cls) {
 	devices[newName].rawPattern = device.rawPattern;
 	devices[newName].effectivePattern = device.effectivePattern;
 	
-	await updateBeatbox8Pattern(devices[newName], globals);
-	
 	cls(devices[newName]);
 	
+	await updateBeatbox8Pattern(devices[newName], globals);			
     } else {
 	console.log("[at-script] create beatbox8 CLONE with name " + newName);
 
@@ -96,11 +95,11 @@ async function clone_beatbox8(device, devices, queues, globals, cls) {
 	// transfer relevant data 
 	devices[newName] = newDevice;
 	queues[newName] = newQueue;
-
-	// initial update 
-	await _clone_update();
+		
+	cls(newDevice);
 	
-	cls(newDevice);	
+	// initial update directly ...
+	await _clone_update();
     }
 }
 

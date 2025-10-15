@@ -62,11 +62,11 @@ async function clone_pulverisateur(device, devices, queues, globals, cls) {
 	devices[newName].noteString = device.noteString;
 	devices[newName].effectiveNoteString = device.effectiveNoteString;
 	devices[newName].transposeBy = device.transposeBy;
-
+		
+	cls(devices[newName]);
+	
 	await updatePulverisateurPreset(devices[newName], globals);
 	await updatePulverisateurNotes(devices[newName], globals);
-	
-	cls(devices[newName]);
 	
     } else {
 	console.log("[at-script] create pulverisateur CLONE with name " + newName);
@@ -105,11 +105,11 @@ async function clone_pulverisateur(device, devices, queues, globals, cls) {
 	// transfer relevant data 
 	devices[newName] = newDevice;
 	queues[newName] = newQueue;
-
+	
+	cls(newDevice);
+	
 	// initial update 
 	await _clone_update();
-	
-	cls(newDevice);	
     }                
 }
 
