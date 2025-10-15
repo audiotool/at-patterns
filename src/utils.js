@@ -64,7 +64,7 @@ export function noteFromString(note) {
     
 }
 
-export function notesFromString(notes, location) {
+export function notesFromString(notes, location, transpose) {
     const singleNotes = notes.split(" ");
 
     var noteEntities = [];
@@ -72,6 +72,7 @@ export function notesFromString(notes, location) {
     
     singleNotes.forEach((n) => {
 	var noteEntity = noteFromString(n);
+	noteEntity.pitch = noteEntity.pitch + transpose;
 	noteEntity.noteCollection = location;
 	noteEntity.positionTicks = pos;
 	pos += noteEntity.durationTicks;

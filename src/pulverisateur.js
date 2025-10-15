@@ -12,115 +12,35 @@ export function _pulverisateur(devName, globals, devices, queues) {
     } else {		
 	console.log("[at-script] create pulverisateur with name " + devName);
 	
-	var device = {};
+	var device = {
+	    name: devName,
+	};
 	var queue = [];
-
-	device.name = devName;
 	
 	queue.push(async function() {
-	    return createPulverisateur(devName, device, globals)	    
+	    return createPulverisateur(device, globals)	    
 	});
-
+	
 	// EVERY DEVICE NEEDS TO IMPLEMENT THIS
-	device._update = async function(device, globals) {
+	const _update = async function() {
 	    await updatePulverisateurPreset(device, globals);
 	    await updatePulverisateurNotes(device, globals);
 	}
 
-	device._reset = function() {
-	    device.noteString = "";
-	    device.effectiveNoteString = null;
-	    device.preset = "";
-	}
-
+	// generate the main language interface 
+	populate_pulverisateur(device, queue, _update);
+	
 	///////////
 	// CLONE //
 	///////////
 
-	// not sure yet how to do a generic way for that ... 
-	
+	// not sure yet how to do a generic way for that ... 	
 	device.clone = function(cls) {
-	    let newName = device.name + "_clone";
-	    let cloneDev = _pulverisateur(newName, globals, devices, queues);
-
-	    // transfer relevant data 
-	    cloneDev.preset = device.preset;
-	    cloneDev.noteString = device.noteString;
-	    cloneDev.effectiveNoteString = device.effectiveNoteString;
-	    	    
-	    queue.push(async function() {		
-		await cloneDev._update(device, globals);		
-	    })
-	    
-	    cls(cloneDev);
-	}
+	    queue.push(async function () {
+		clone_pulverisateur(device, devices, queues, globals, cls);
+	    });
 	
-	///////////////////////////
-	// PULV PRESET INTERFACE //
-	///////////////////////////
-	
-	// create a callback to evaluate the pattern string        
-	device.preset = function(preset) {
-	    device.presetName = preset;
-	    
-	    // ASYNC PART FOR NEXUS MODIFICATION, executed later
-	    queue.push(async function() {		
-		await device._update(device, globals);		
-	    })
-
-	    // pass on device for function chaining
-	    return device;
-	}
-
-	//////////////////////////
-	// PULV NOTES INTERFACE //
-	//////////////////////////
-
-	device.notes = function(notes) {
-	    device.noteString = notes;
-	    	    
-	    // ASYNC PART FOR NEXUS MODIFICATION, executed later
-	    queue.push(async function() {		
-		await device._update(device, globals);		
-	    })
-
-	    // pass on device for function chaining
-	    return device;
-	}
-
-	// reverse notes
-	device.reverse = function() {	    
-	    device.effectiveNoteString = reverse(device.effectiveNoteString ?? device.noteString, " ");	
-	    
-	    // ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
-	    queue.push(async function() {	
-		await device._update(device, globals);
-	    });
-	    
-	    return device;
-	}
-
-	// shift left
-	device.lshift = function(n) {
-	    device.effectiveNoteString = lshift(device.effectiveNoteString ?? device.noteString, " ", n);
-	    
-	    // ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
-	    queue.push(async function() {	
-		await device._update(device, globals);
-	    });
-	    
-	    return device;
-	}
-
-	// shift right
-	device.rshift = function(n) {
-	    device.effectiveNoteString = rshift(device.effectiveNoteString ?? device.noteString, " ", n);	
-	    
-	    // ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
-	    queue.push(async function() {	
-		await device._update(device, globals);
-	    });
-	    
+	    // ORIGINAL device gets passed through
 	    return device;
 	}
 	
@@ -132,7 +52,162 @@ export function _pulverisateur(devName, globals, devices, queues) {
     return device
 }
 
-async function createPulverisateur(devName, device, globals) {
+async function clone_pulverisateur(device, devices, queues, globals, cls) {
+    let newName = device.name + "_clone";
+
+    if (devices[newName]) {
+	console.log("[at-script] pulverisateur CLONE with name " + newName + " already exists!")
+	// update clone instead of reset ...
+	devices[newName].presetName = device.presetName;
+	devices[newName].noteString = device.noteString;
+	devices[newName].effectiveNoteString = device.effectiveNoteString;
+	devices[newName].transposeBy = device.transposeBy;
+
+	await updatePulverisateurPreset(devices[newName], globals);
+	await updatePulverisateurNotes(devices[newName], globals);
+	
+	cls(devices[newName]);
+	
+    } else {
+	console.log("[at-script] create pulverisateur CLONE with name " + newName);
+
+	var newDevice = {
+	    name: newName,
+	    presetName: device.presetName,
+	    noteString: device.noteString,
+	    effectiveNoteString: device.effectiveNoteString,
+	    transposeBy: device.transposeBy,
+	};
+	
+	var newQueue = [];
+	
+	await createPulverisateur(newDevice, globals);
+
+	// EVERY DEVICE NEEDS TO IMPLEMENT THIS
+	const _clone_update = async function() {
+	    await updatePulverisateurPreset(newDevice, globals);
+	    await updatePulverisateurNotes(newDevice, globals);
+	}
+
+	// generate the main language interface for new device
+	populate_pulverisateur(newDevice, newQueue, _clone_update);
+
+	// create clone function
+	newDevice.clone = function(cls2) {	
+	    newQueue.push(async function() {
+		clone_pulverisateur(newDevice, devices, queues, globals, cls2);
+	    });
+	    
+	    // NEW device gets passed through
+	    return newDevice;
+	}
+
+	// transfer relevant data 
+	devices[newName] = newDevice;
+	queues[newName] = newQueue;
+
+	// initial update 
+	await _clone_update();
+	
+	cls(newDevice);	
+    }                
+}
+
+function populate_pulverisateur(device, queue, _update) {
+    ///////////
+    // RESET //
+    ///////////
+    
+    device._reset = function() {
+	device.noteString = "";
+	device.effectiveNoteString = null;
+	device.presetName = "";
+	device.transposeBy = 0;
+    }
+    
+    ///////////////////////////
+    // PULV PRESET INTERFACE //
+    ///////////////////////////
+    
+    // create a callback to evaluate the pattern string        
+    device.preset = function(preset) {
+	device.presetName = preset;
+	
+	// ASYNC PART FOR NEXUS MODIFICATION, executed later
+	queue.push(async function() {		
+	    await _update();		
+	})
+
+	// pass on device for function chaining
+	return device;
+    }
+
+    //////////////////////////
+    // PULV NOTES INTERFACE //
+    //////////////////////////
+
+    device.notes = function(notes) {
+	device.noteString = notes;
+	
+	// ASYNC PART FOR NEXUS MODIFICATION, executed later
+	queue.push(async function() {		
+	    await _update();		
+	})
+
+	// pass on device for function chaining
+	return device;
+    }
+
+    // reverse notes
+    device.reverse = function() {	    
+	device.effectiveNoteString = reverse(device.effectiveNoteString ?? device.noteString, " ");	
+	
+	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	queue.push(async function() {	
+	    await _update();
+	});
+	
+	return device;
+    }
+
+    // shift left
+    device.lshift = function(n) {
+	device.effectiveNoteString = lshift(device.effectiveNoteString ?? device.noteString, " ", n);
+	
+	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	queue.push(async function() {	
+	    await _update();
+	});
+	
+	return device;
+    }
+
+    // shift right
+    device.rshift = function(n) {
+	device.effectiveNoteString = rshift(device.effectiveNoteString ?? device.noteString, " ", n);	
+	
+	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	queue.push(async function() {	
+	    await _update();
+	});
+	
+	return device;
+    }
+
+    device.transpose = function(n) {
+	device.transposeBy = n;
+
+	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	queue.push(async function() {	
+	    await _update();
+	});
+	
+	return device;
+    }
+}
+
+
+async function createPulverisateur(device, globals) {
     
     await globals.nexus.modify((t) => {
 	// create a pulverisateur
@@ -173,6 +248,7 @@ async function createPulverisateur(devName, device, globals) {
 	// create note track, collection. region ...
 	const noteTrack = t.create("noteTrack", {
 	    player: pulverisateur.location,
+	    orderAmongTracks: Math.random(),
 	});
 	
 	const noteCollection = t.create("noteCollection", {})
@@ -185,7 +261,7 @@ async function createPulverisateur(devName, device, globals) {
 		loopDurationTicks: 15360 * 1,
 		loopOffsetTicks: 0,
 		enabled: true,
-		displayName: devName + "-Notes",
+		displayName: device.name + "-Notes",
 	    },
 	    noteCollection: noteCollection.location,
 	})
@@ -205,7 +281,7 @@ async function createPulverisateur(devName, device, globals) {
 async function updatePulverisateurPreset(device, globals) {
 
     // nothing to do ...
-    if (device.preset === "") {
+    if (device.presetName === "") {
 	return;
     }
     
@@ -218,27 +294,32 @@ async function updatePulverisateurPreset(device, globals) {
     
     const pulvPreset = presets[0] ?? throw_("no preset found")
     
-    await globals.nexus.modify((t) => { 
+    await globals.nexus.modify((t) => {
 	let pulv = t.entities.getEntity(device.id);
 	t.applyPresetTo(pulv, pulvPreset);	
     });
 }
 
-async function updatePulverisateurNotes(device, globals) {
-        
+async function updatePulverisateurNotes(device, globals) {    
     // delete current content
-    await globals.nexus.modify((t) => { 
-	device.noteIds.forEach((i) => t.remove(i));
-	device.noteIds = []
-    });
-
+    if (device.noteIds) {
+	await globals.nexus.modify((t) => { 
+	    device.noteIds.forEach((i) => t.remove(i));
+	    device.noteIds = []
+	});
+    }
+    
     // nothing to do ...
     if (device.noteString === "") {
 	return;
     }
 
     // create new notes
-    var noteEntities = notesFromString(device.effectiveNoteString ?? device.noteString, device.noteCollectionLocation);
+    var noteEntities = notesFromString(
+	device.effectiveNoteString ?? device.noteString,
+	device.noteCollectionLocation,
+	device.transposeBy ?? 0
+    );
     
     await globals.nexus.modify((t) => { 
 	noteEntities.forEach((n) => {
