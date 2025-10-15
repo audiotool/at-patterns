@@ -236,9 +236,10 @@ async function updatePulverisateurNotes(device, globals) {
     if (device.noteString === "") {
 	return;
     }
-    
+
     // create new notes
     var noteEntities = notesFromString(device.effectiveNoteString ?? device.noteString, device.noteCollectionLocation);
+    
     await globals.nexus.modify((t) => { 
 	noteEntities.forEach((n) => {
 	    let nc = t.create("note", n);

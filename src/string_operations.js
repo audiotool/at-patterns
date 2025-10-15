@@ -1,10 +1,12 @@
 export function reverse(string, sep) {
     var arr = string.split(sep);
+    const numElem = arr.length;
+    
     var rev = [];
 
     var i;
     
-    for(i = 0; i < arr.length; i++) {
+    for(i = 0; i < numElem; i++) {
 	var elem = arr.pop();
 	rev.push(elem);	    
     }
