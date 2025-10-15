@@ -1,18 +1,18 @@
 import {createSynth, populateNoteSynth, updateSynthPreset, cloneNoteSynth, updateSynthNotes} from "./note_synth_utils.js"
 
 // DEVICE CONSTRUCTOR
-export function _pulverisateur(devName, globals, devices, queues) {
+export function _heisenberg(devName, globals, devices, queues) {
     // create device queues            
     if (devices[devName]) {
-	console.log("[at-script] pulverisateur with name " + devName + " already exists!")
+	console.log("[at-script] heisenberg with name " + devName + " already exists!")
 	devices[devName]._reset();
 	return devices[devName];	
     } else {		
-	console.log("[at-script] create pulverisateur with name " + devName);
+	console.log("[at-script] create heisenberg with name " + devName);
 	
 	var device = {
 	    name: devName,
-	    synthType: "pulverisateur",
+	    synthType: "heisenberg",
 	};
 	var queue = [];
 	
