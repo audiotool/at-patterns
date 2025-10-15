@@ -296,7 +296,7 @@ async function updatePulverisateurPreset(device, globals) {
     
     await globals.nexus.modify((t) => {
 	let pulv = t.entities.getEntity(device.id);
-	t.applyPresetTo(pulv, pulvPreset);	
+	t.applyPresetTo(pulv, pulvPreset);
     });
 }
 

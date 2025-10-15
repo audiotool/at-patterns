@@ -2,6 +2,14 @@ function isCharNumber(c) {
     return c >= '0' && c <= '9';
 }
 
+export function restDurationFromString(rest) {
+    var splitRest = rest.split(":");
+
+    var restDuration = 15360 / parseInt(splitRest[1]);
+
+    return restDuration;
+}
+
 // c4:4 -> c, octave 4, quarter note 
 export function noteFromString(note) {
     var splitNote = note.split(":");
@@ -27,8 +35,7 @@ export function noteFromString(note) {
     } else {
 	octaveNum = parseInt(octave.join(""));
     }
-    
-    
+        
     var base = 12;
     var mod = 0;
     switch (noteName.join("")) {
@@ -51,7 +58,7 @@ export function noteFromString(note) {
 	
     default: console.log("invalid note name");
     }
-
+    
     const noteNum = base * octaveNum + mod;
 
     return {
@@ -71,12 +78,17 @@ export function notesFromString(notes, location, transpose) {
     var pos = 0;
     
     singleNotes.forEach((n) => {
-	var noteEntity = noteFromString(n);
-	noteEntity.pitch = noteEntity.pitch + transpose;
-	noteEntity.noteCollection = location;
-	noteEntity.positionTicks = pos;
-	pos += noteEntity.durationTicks;
-	noteEntities.push(noteEntity);
+	// rest
+	if (n.startsWith("r")) {
+	    pos += restDurationFromString(n);	    
+	} else {
+	    var noteEntity = noteFromString(n);	    
+	    noteEntity.pitch = noteEntity.pitch + transpose;
+	    noteEntity.noteCollection = location;
+	    noteEntity.positionTicks = pos;
+	    pos += noteEntity.durationTicks;
+	    noteEntities.push(noteEntity);
+	}
     })
 
     return noteEntities;
