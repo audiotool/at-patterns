@@ -1,5 +1,5 @@
 import {notesFromString} from "./utils.js";
-import {lshift, rshift, reverse} from "./string_operations.js"
+import {lshift, rshift, reverse, palindrome} from "./string_operations.js"
 
 export async function createSynth(device, globals) {
     
@@ -89,7 +89,8 @@ export async function updateSynthNotes(device, globals) {
     var noteEntities = notesFromString(
 	device.effectiveNoteString ?? device.noteString,
 	device.noteCollectionLocation,
-	device.transposeBy ?? 0
+	device.transposeBy ?? 0,
+	device.durationModifier ?? 1,
     );
     
     await globals.nexus.modify((t) => { 
@@ -132,6 +133,7 @@ export function populateNoteSynth(device, queue, _update) {
 	device.effectiveNoteString = null;
 	device.presetName = "";
 	device.transposeBy = 0;
+	device.durationModifier = 1;
     }
     
     ///////////////////////////
@@ -203,6 +205,7 @@ export function populateNoteSynth(device, queue, _update) {
 	return device;
     }
 
+    // transpose by semitones
     device.transpose = function(n) {
 	device.transposeBy = n;
 
@@ -212,7 +215,43 @@ export function populateNoteSynth(device, queue, _update) {
 	});
 	
 	return device;
-    }    
+    }
+
+    // create palindrome from pattern
+    device.palindrome = function(n) {
+	device.effectiveNoteString = palindrome(device.effectiveNoteString ?? device.noteString, " ", n);	
+
+	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	queue.push(async function() {	
+	    await _update();
+	});
+	
+	return device;
+    }
+
+    // twice as fast
+    device.doubletime = function() {
+	device.durationModifier = 0.5;
+
+	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	queue.push(async function() {	
+	    await _update();
+	});
+	
+	return device;
+    }
+
+    // twice as fast
+    device.halftime = function() {
+	device.durationModifier = 2;
+
+	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
+	queue.push(async function() {	
+	    await _update();
+	});
+	
+	return device;
+    }
 }
 
 export async function cloneNoteSynth(device, devices, queues, globals, cls) {
@@ -274,5 +313,7 @@ export async function cloneNoteSynth(device, devices, queues, globals, cls) {
 	
 	// initial update 
 	await _clone_update();
+
+	return newDevice;
     }                
 }

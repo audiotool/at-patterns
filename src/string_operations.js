@@ -1,3 +1,16 @@
+export function palindrome(string, sep) {
+    var arr = string.split(sep);
+    const numElem = arr.length;
+
+    var i;
+    
+    for(i = numElem - 1; i >= 0; i--) {
+	arr.push(arr[i])
+    }
+
+    return arr.join(sep)
+}
+
 export function reverse(string, sep) {
     var arr = string.split(sep);
     const numElem = arr.length;
