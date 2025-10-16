@@ -19,13 +19,17 @@ because then we might be able to add time-based modifications (i.e. "every 2 bar
 
 * clone repo
 * download nexus sdk (https://rpc.audiotool.com/dev/nexus/nexus.tgz) and place in repo's root folder
-* run `npm install nexus.tgz`
+* run `npm install audiotool-nexus-0.0.4.tgz`
 * run `npm install` 
 * run `npm run dev` 
 
 ## Random Ideas:
 
 * **FIND BETTER NAME**
+* reduce number of updates to make it snappier 
+* post window for connection state, 
+* a preset browser, `listPresets("space")` -> postWindow etc ...
+* a device browser, `listDevices()` -> postWindow
 * `playLoop` to play a loop of various length (if that is available at some point)
 * parameter automation pattern as pattern ?
 * note region length of device note regions 
