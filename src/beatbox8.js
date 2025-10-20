@@ -20,12 +20,9 @@ export function _beatbox8(devName, globals, devices, queues) {
 	    return createBeatbox8(device, globals)	    
 	});
 
-	// EVERY DEVICE NEEDS TO IMPLEMENT THIS
-	const _update = async function() {
-	    await updateBeatbox8Pattern(device, globals);
-	};
+	// EVERY DEVICE NEEDS TO IMPLEMENT THIS	
 
-	populate_beatbox8(device, queue, _update);
+	populate_beatbox8(device);
 
 	///////////
 	// CLONE //
@@ -40,6 +37,12 @@ export function _beatbox8(devName, globals, devices, queues) {
 	    // ORIGINAL device gets passed through
 	    return device;
 	}
+
+	device._update = function() {
+	    queue.push(async function() {
+		await updateBeatbox8Pattern(device, globals);
+	    });
+	};
 	
 	devices[devName] = device;	
 	queues[devName] = queue;	
@@ -92,10 +95,13 @@ async function clone_beatbox8(device, devices, queues, globals, cls) {
 	    return newDevice;
 	}
 
-	// transfer relevant data 
+	new_device._update = function() {
+	    newQueue.push(_clone_update);
+	}
+	
 	devices[newName] = newDevice;
 	queues[newName] = newQueue;
-		
+			
 	cls(newDevice);
 	
 	// initial update directly ...
@@ -103,7 +109,7 @@ async function clone_beatbox8(device, devices, queues, globals, cls) {
     }
 }
 
-function populate_beatbox8(device, queue, _update) {
+function populate_beatbox8(device) {
     ////////////////////
     // RESET FUNCTION //
     ////////////////////
@@ -121,11 +127,6 @@ function populate_beatbox8(device, queue, _update) {
     device.pattern = function(pattern) {
 	device.rawPattern = pattern;
 	
-	// ASYNC PART FOR NEXUS MODIFICATION, executed later
-	queue.push(async function() {		
-	    await _update();		
-	})
-
 	// pass on device for function chaining
 	return device;
     }
@@ -133,11 +134,6 @@ function populate_beatbox8(device, queue, _update) {
     // shift the pattern right by n steps
     device.rshift = function(n) {	    
 	device.effectivePattern = rshift(device.effectivePattern ?? device.rawPattern, "", n);	
-	
-	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
-	queue.push(async function() {	
-	    await _update();
-	});
 
 	// pass on device for function chaining
 	return device;
@@ -146,11 +142,6 @@ function populate_beatbox8(device, queue, _update) {
     // shift the pattern left by n steps
     device.lshift = function(n) {
 	device.effectivePattern = lshift(device.effectivePattern ?? device.rawPattern, "", n);	
-	
-	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
-	queue.push(async function() {	
-	    await _update();
-	});
 
 	// pass on device for function chaining
 	return device;
@@ -160,11 +151,6 @@ function populate_beatbox8(device, queue, _update) {
     device.reverse = function(n) {
 	device.effectivePattern = reverse(device.effectivePattern ?? device.rawPattern, "");	
 	
-	// ASYNC PART FOR THE NEXUS MODIFICATION, executed after eval
-	queue.push(async function() {	
-	    await _update();
-	});
-
 	// pass on device for function chaining
 	return device;
     }

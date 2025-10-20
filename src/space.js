@@ -20,14 +20,8 @@ export function _space(devName, globals, devices, queues) {
 	    return createSynth(device, globals)	    
 	});
 	
-	// EVERY DEVICE NEEDS TO IMPLEMENT THIS
-	const _update = async function() {
-	    await updateSynthPreset(device, globals);
-	    await updateSynthNotes(device, globals);
-	}
-
 	// generate the main language interface 
-	populateNoteSynth(device, queue, _update);
+	populateNoteSynth(device);
 	
 	///////////
 	// CLONE //
@@ -41,6 +35,14 @@ export function _space(devName, globals, devices, queues) {
 	
 	    // ORIGINAL device gets passed through
 	    return device;
+	}
+
+	// EVERY DEVICE NEEDS TO IMPLEMENT THIS
+	device._update = function() {
+	    queue.push(async function() {
+		await updateSynthPreset(device, globals);
+		await updateSynthNotes(device, globals);
+	    });	    
 	}
 	
 	devices[devName] = device;
