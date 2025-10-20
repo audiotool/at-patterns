@@ -196,14 +196,21 @@ export function populateNoteSynth(device) {
 
     // twice as fast
     device.doubletime = function() {
-	device.durationModifier = 0.5;
+	device.durationModifier *= 0.5;
 	
 	return device;
     }
 
     // twice as fast
     device.halftime = function() {
-	device.durationModifier = 2;
+	device.durationModifier *= 2;
+	
+	return device;
+    }
+
+    // twice as fast
+    device.modtime = function(fact) {
+	device.durationModifier *= fact;
 	
 	return device;
     }
@@ -219,6 +226,7 @@ export async function cloneNoteSynth(device, devices, queues, globals, cls) {
 	devices[newName].noteString = device.noteString;
 	devices[newName].effectiveNoteString = device.effectiveNoteString;
 	devices[newName].transposeBy = device.transposeBy;
+	devices[newName].durationModifier = device.durationModifier;
 		
 	cls(devices[newName]);
 	
@@ -235,6 +243,7 @@ export async function cloneNoteSynth(device, devices, queues, globals, cls) {
 	    noteString: device.noteString,
 	    effectiveNoteString: device.effectiveNoteString,
 	    transposeBy: device.transposeBy,
+	    durationModifier: device.durationModifier,
 	};
 	
 	var newQueue = [];

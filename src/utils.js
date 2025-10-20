@@ -86,7 +86,7 @@ export function notesFromString(notes, location, transpose, durMod) {
 	    noteEntity.pitch = noteEntity.pitch + transpose;
 	    noteEntity.noteCollection = location;
 	    noteEntity.positionTicks = pos;
-	    noteEntity.durationTicks *= durMod;
+	    noteEntity.durationTicks = Math.floor(noteEntity.durationTicks * durMod);
 	    pos += noteEntity.durationTicks;
 	    noteEntities.push(noteEntity);
 	}
