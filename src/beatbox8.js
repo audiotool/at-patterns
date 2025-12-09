@@ -5,11 +5,11 @@ export function _beatbox8(devName, globals, devices, queues) {
 
     // create device queues            
     if (devices[devName]) {
-	console.log("[at-script] beatbox8 with name " + devName + " already exists!")
+	console.log("[at-patterns] beatbox8 with name " + devName + " already exists!")
 	devices[devName]._reset();
 	return devices[devName];	
     } else {		
-	console.log("[at-script] create beatbox8 with name " + devName);
+	console.log("[at-patterns] create beatbox8 with name " + devName);
 	
 	var device = {};
 	var queue = [];
@@ -56,7 +56,7 @@ async function clone_beatbox8(device, devices, queues, globals, cls) {
     let newName = device.name + "_clone";
 
     if (devices[newName]) {
-	console.log("[at-script] beatbox8 CLONE with name " + newName + " already exists!")
+	console.log("[at-patterns] beatbox8 CLONE with name " + newName + " already exists!")
 	// update clone instead of reset ...
 	devices[newName].rawPattern = device.rawPattern;
 	devices[newName].effectivePattern = device.effectivePattern;
@@ -65,7 +65,7 @@ async function clone_beatbox8(device, devices, queues, globals, cls) {
 	
 	await updateBeatbox8Pattern(devices[newName], globals);			
     } else {
-	console.log("[at-script] create beatbox8 CLONE with name " + newName);
+	console.log("[at-patterns] create beatbox8 CLONE with name " + newName);
 
 	var newDevice = {
 	    name: newName,	    
@@ -193,7 +193,7 @@ async function createBeatbox8(device, globals) {
 	// as for this example we expect a free channel to be there on the given
 	// project
 	if (firstFreeChannel === undefined) {
-	    console.error("[at-script] can't create device, no free channel")
+	    console.error("[at-patterns] can't create device, no free channel")
 	}
 	
 	t.create("audioConnection", {

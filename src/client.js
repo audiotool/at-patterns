@@ -3,7 +3,7 @@ import { createArrayTyped } from "@audiotool/nexus/utils";
 
 // setup the client
 export async function setupClient(globals) {
-    console.log("[at-script] setup client");
+    console.log("[at-patterns] setup client");
     // Create client and set authentication
 
     var pat = document.getElementById('pat').value;
@@ -13,7 +13,7 @@ export async function setupClient(globals) {
 	pat: pat,
     });
     
-    console.log("[at-script] authenticated");
+    console.log("[at-patterns] authenticated");
     
     globals["nexus"] = await globals.client.createSyncedDocument({
 	mode: "online",
@@ -21,7 +21,7 @@ export async function setupClient(globals) {
 	project: "https://beta.audiotool.com/studio?project=" + project,
     })
 
-    console.log("[at-script] connected to project");
+    console.log("[at-patterns] connected to project");
     
     // Start syncing
     await globals.nexus.start()    

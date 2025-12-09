@@ -30,7 +30,7 @@ export async function createSynth(device, globals) {
 	// as for this example we expect a free channel to be there on the given
 	// project
 	if (firstFreeChannel === undefined) {
-	    console.error("[at-script] can't create device, no free channel")
+	    console.error("[at-patterns] can't create device, no free channel")
 	    return;
 	}
 	
@@ -220,7 +220,7 @@ export async function cloneNoteSynth(device, devices, queues, globals, cls) {
     let newName = device.name + "_clone";
 
     if (devices[newName]) {
-	console.log("[at-script] " + device.synthType + " CLONE with name " + newName + " already exists!")
+	console.log("[at-patterns] " + device.synthType + " CLONE with name " + newName + " already exists!")
 	// update clone instead of reset ...
 	devices[newName].presetName = device.presetName;
 	devices[newName].noteString = device.noteString;
@@ -234,7 +234,7 @@ export async function cloneNoteSynth(device, devices, queues, globals, cls) {
 	await updateSynthNotes(devices[newName], globals);
 	
     } else {
-	console.log("[at-script] create " + device.synthType + " CLONE with name " + newName);
+	console.log("[at-patterns] create " + device.synthType + " CLONE with name " + newName);
 
 	var newDevice = {
 	    name: newName,

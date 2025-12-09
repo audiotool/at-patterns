@@ -4,11 +4,11 @@ import {createSynth, populateNoteSynth, updateSynthPreset, cloneNoteSynth, updat
 export function _bassline(devName, globals, devices, queues) {
     // create device queues            
     if (devices[devName]) {
-	console.log("[at-script] bassline with name " + devName + " already exists!")
+	console.log("[at-patterns] bassline with name " + devName + " already exists!")
 	devices[devName]._reset();
 	return devices[devName];	
     } else {		
-	console.log("[at-script] create bassline with name " + devName);
+	console.log("[at-patterns] create bassline with name " + devName);
 	
 	var device = {
 	    name: devName,

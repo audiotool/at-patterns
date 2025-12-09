@@ -1,6 +1,7 @@
 export default {
     // config options
     server: {
-    port: 5174,
-  },
+	host: '127.0.0.1',	
+	port: 5173,
+    },
 }

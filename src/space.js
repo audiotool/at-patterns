@@ -4,11 +4,11 @@ import {createSynth, populateNoteSynth, updateSynthPreset, cloneNoteSynth, updat
 export function _space(devName, globals, devices, queues) {
     // create device queues            
     if (devices[devName]) {
-	console.log("[at-script] space with name " + devName + " already exists!")
+	console.log("[at-patterns] space with name " + devName + " already exists!")
 	devices[devName]._reset();
 	return devices[devName];	
     } else {		
-	console.log("[at-script] create space with name " + devName);
+	console.log("[at-patterns] create space with name " + devName);
 	
 	var device = {
 	    name: devName,

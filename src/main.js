@@ -17,7 +17,7 @@ import imgUrl from './at-transparent.png'
 
 document.querySelector('#app').innerHTML = `
   <div>    
-    <h1><img src="${imgUrl}" width="80px"></img> - script</h1>
+    <h1><img src="${imgUrl}" width="80px"></img> - patterns</h1>
     <h2>Live-code with <a href="https://beta.audiotool.com">Audiotool</a>!</h2>
     <div class="settings">
       <label for="pat">Personal Access Token</label>
@@ -75,11 +75,11 @@ document.querySelector('#eval_code').onclick = async function(){ await evalCode(
 // evaluate the code from the textarea
 async function evalCode() {
     if (!globals.nexus) {
-	console.error("[at-script] NOT CONNECTED");
+	console.error("[at-patterns] NOT CONNECTED");
 	return;
     }
     
-    console.log("[at-script] eval code");
+    console.log("[at-patterns] eval code");
 
     eval(view.state.doc.toString());
 
@@ -91,7 +91,7 @@ async function evalCode() {
     
     // execute the async chains
     for (const [key, queue] of Object.entries(queues)) {
-	console.log("[at-script] execute update queue for " + key);
+	console.log("[at-patterns] execute update queue for " + key);
 	var n_fun = queue.length;
 	for (var i = 0; i < n_fun; i++) {
 	    await queue.shift()();
