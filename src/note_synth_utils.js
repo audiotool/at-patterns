@@ -13,7 +13,7 @@ export async function createSynth(device, globals) {
 	// get or create a free channel, connect 
 	let channelInputLocation = getOrCreateChannel(t);		
 	t.create("desktopAudioCable", {
-	    fromSocket: beatbox8.fields.audioOutput.location,
+	    fromSocket: noteSynth.fields.audioOutput.location,
 	    toSocket: channelInputLocation,
 	})
 	
