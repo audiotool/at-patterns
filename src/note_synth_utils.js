@@ -5,16 +5,11 @@ export async function createSynth(device, globals) {
     
     await globals.nexus.modify((t) => {
 	// create a noteSynth
-	const noteSynth = t.create(device.synthType, {});
+	const noteSynth = t.create(device.synthType, {
+	    x: Math.round(Math.random() * 1000),
+	    y: Math.round(Math.random() * 1000),
+	});
 	
-	// this places the beatbox on the desktop (random location)
-	let x =
-	    t.create("desktopPlacement", {
-		entity: noteSynth.location,
-		x: Math.round(Math.random() * 1000),
-		y: Math.round(Math.random() * 1000),
-	    });
-
 	// connect the beatbox to the first channel that doesn't have
 	// something pointing to its audio input
 	const firstFreeChannel = t.entities
@@ -34,7 +29,7 @@ export async function createSynth(device, globals) {
 	    return;
 	}
 	
-	t.create("audioConnection", {
+	t.create("desktopAudioCable", {
 	    fromSocket: noteSynth.fields.audioOutput.location,
 	    toSocket: firstFreeChannel.fields.audioInput.location,
 	})
@@ -57,7 +52,7 @@ export async function createSynth(device, globals) {
 		enabled: true,
 		displayName: device.name + "-Notes",
 	    },
-	    noteCollection: noteCollection.location,
+	    collection: noteCollection.location,
 	})
 
 	// keep the IDs so we can fill the pattern later on ...

@@ -19,11 +19,9 @@ document.querySelector('#app').innerHTML = `
   <div>    
     <h1><img src="${imgUrl}" width="80px"></img> - patterns</h1>
     <h2>Live-code with <a href="https://beta.audiotool.com">Audiotool</a>!</h2>
-    <div class="settings">
-      <label for="pat">Personal Access Token</label>
-      <input type="text" id="pat" name="pat" size="40" value=""/>
+    <div class="settings">      
       <label for="project">Project</label>
-    <input type="text" id="project" name="project" size="40" value="">
+      <input type="text" id="project" name="project" size="40" value="">
     </div>
     <div class="card">
       <button id="setup_client" type="button">Connect</button>

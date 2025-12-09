@@ -1,19 +1,43 @@
 import { createAudiotoolClient } from "@audiotool/nexus";
-import { createArrayTyped } from "@audiotool/nexus/utils";
+import { createArrayTyped, getLoginStatus } from "@audiotool/nexus/utils";
 
 // setup the client
 export async function setupClient(globals) {
-    console.log("[at-patterns] setup client");
+    
     // Create client and set authentication
+    console.log("[at-patterns] setup client");
 
-    var pat = document.getElementById('pat').value;
-    var project = document.getElementById('project').value;    
-    
-    globals["client"] = await createAudiotoolClient({
-	pat: pat,
+    //var pat = document.getElementById('pat').value;
+    var project = document.getElementById('project').value;
+
+
+    // check if current tab is logged in for some user
+    const status = await getLoginStatus({
+	clientId: "b2bbd30e-2a6d-432f-b7eb-6897c09565fb",
+	redirectUrl: "http://127.0.0.1:5173/",
+	scope: "project:write",
     });
+
+    // if user isn't logged in, create a login button and wait
+    if (!status.loggedIn) {
+	console.log("[at-patterns] not logged in!");
+	const button = document.createElement("button");
+	button.innerHTML = "Login";
+	button.addEventListener("click", () => status.login());
+	document.body.appendChild(button);  
+	await new Promise(() => {}) // wait forever  
+    } else {
+	console.log("[at-patterns] logged in!");
+    }
+
+    console.log("[at-patterns] setup client");
+
+    // Create an audiotool client authorized with the current user
+    globals["client"] = await createAudiotoolClient({
+	authorization: status
+    })
     
-    console.log("[at-patterns] authenticated");
+    console.log("[at-patterns] client ready!");
     
     globals["nexus"] = await globals.client.createSyncedDocument({
 	mode: "online",
