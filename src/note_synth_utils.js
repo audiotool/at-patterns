@@ -10,30 +10,13 @@ export async function createSynth(device, globals) {
 	    y: Math.round(Math.random() * 1000),
 	});
 	
-	// connect the beatbox to the first channel that doesn't have
-	// something pointing to its audio input
-	const firstFreeChannel = t.entities
-	      .ofTypes("mixerChannel")
-	      .get()
-	      .filter(
-		  (channel) =>
-		  t.entities.pointingTo
-		      .locations(channel.fields.audioInput.location)
-		      .get().length === 0
-	      )[0];
-
-	// as for this example we expect a free channel to be there on the given
-	// project
-	if (firstFreeChannel === undefined) {
-	    console.error("[at-patterns] can't create device, no free channel")
-	    return;
-	}
-	
+	// get or create a free channel, connect 
+	let channelInputLocation = getOrCreateChannel(t);		
 	t.create("desktopAudioCable", {
-	    fromSocket: noteSynth.fields.audioOutput.location,
-	    toSocket: firstFreeChannel.fields.audioInput.location,
+	    fromSocket: beatbox8.fields.audioOutput.location,
+	    toSocket: channelInputLocation,
 	})
-
+	
 	// create note track, collection. region ...
 	const noteTrack = t.create("noteTrack", {
 	    player: noteSynth.location,

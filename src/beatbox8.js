@@ -1,4 +1,5 @@
-import {lshift, rshift, reverse} from "./string_operations.js"
+import { lshift, rshift, reverse } from "./string_operations.js"
+import { getOrCreateChannel } from "./connection.js"
 
 // DEVICE CONSTRUCTOR
 export function _beatbox8(devName, globals, devices, queues) {
@@ -172,28 +173,12 @@ async function createBeatbox8(device, globals) {
 	    // at most 1 pattern per slot. 
 	    slot: beatbox8.fields.patternSlots.array[0].location,	
 	});
-	
-	// connect the beatbox to the first channel that doesn't have
-	// something pointing to its audio input
-	const firstFreeChannel = t.entities
-	      .ofTypes("mixerChannel")
-	      .get()
-	      .filter(
-		  (channel) =>
-		  t.entities.pointingTo
-		      .locations(channel.fields.audioInput.location)
-		      .get().length === 0
-	      )[0];
 
-	// as for this example we expect a free channel to be there on the given
-	// project
-	if (firstFreeChannel === undefined) {
-	    console.error("[at-patterns] can't create device, no free channel")
-	}
-	
+	// get or create a free channel, connect 
+	let channelInputLocation = getOrCreateChannel(t);		
 	t.create("desktopAudioCable", {
 	    fromSocket: beatbox8.fields.audioOutput.location,
-	    toSocket: firstFreeChannel.fields.audioInput.location,
+	    toSocket: channelInputLocation,
 	})
 
 	// keep the IDs so we can fill the pattern later on ...
