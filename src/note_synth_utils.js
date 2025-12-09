@@ -6,8 +6,8 @@ export async function createSynth(device, globals) {
     await globals.nexus.modify((t) => {
 	// create a noteSynth
 	const noteSynth = t.create(device.synthType, {
-	    x: Math.round(Math.random() * 1000),
-	    y: Math.round(Math.random() * 1000),
+	    position_x: Math.round(Math.random() * 1000),
+	    position_y: Math.round(Math.random() * 1000),
 	});
 	
 	// get or create a free channel, connect 
