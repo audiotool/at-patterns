@@ -13,7 +13,7 @@ export async function setupClient(globals) {
     // check if current tab is logged in for some user
     const status = await getLoginStatus({
 	clientId: "b2bbd30e-2a6d-432f-b7eb-6897c09565fb",
-	redirectUrl: "http://127.0.0.1:5173/",
+	redirectUrl: "https://audiotool.github.io/at-patterns/",
 	scope: "project:write",
     });
      
