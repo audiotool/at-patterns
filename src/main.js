@@ -67,6 +67,9 @@ document.querySelector('#app').innerHTML = `
            c -> clap<br>
            - -> pause<br>
         </div>
+    <div style="clear:left;padding-top:20px;"> 
+    (c) 2025 Audiotool Inc
+    </div>
     </div>
 `
 
