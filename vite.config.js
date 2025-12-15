@@ -5,11 +5,7 @@ export default {
 	port: 5173,
     },
     base: '/at-patterns/',
-    esbuild: {
-	pure: ['console.log'],    // example: have esbuild remove any console.log
-	keepNames: true,
-    },
     build: {
-	minify: 'esbuild',
+	minify: false,
     }
 }
