@@ -1,5 +1,6 @@
 import {notesFromString} from "./utils.js";
 import {lshift, rshift, reverse, palindrome} from "./string_operations.js"
+import { getOrCreateChannel } from "./connection.js"
 
 export async function createSynth(device, globals) {
     
