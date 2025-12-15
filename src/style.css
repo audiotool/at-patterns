@@ -1,120 +1,153 @@
 :root {
-  font-family: mononoki;
-  line-height: 1.5;
-  font-weight: 400;
+    font-family: mononoki;
+    line-height: 1.5;
+    font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #fff;
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #fff;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
 }
+
 a:hover {
-  color: #535bf2;
+    color: #535bf2;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #def;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+html, body {
+    margin: 0;  
+    background-color: #eee;
+    height: 100%;
+    width: 100%;
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+    height: 100%;
+    width: 100%;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #f7df1eaa);
+#header {
+    padding-top: 0.1%;
+    padding-left: 1%;
+    background-color: #bcd;
+    height: 50px;
 }
 
-.card {
-  padding: 2em;
+#headings {
+    float:left;
 }
 
-.settings {
-    display:grid;
-    grid-template-columns: max-content max-content;
-    grid-gap:5px;
+img {
+    padding: 0px 0 0 0;
 }
 
-div.settings label       { text-align:right; }
-div.settings label:after { content: ":"; }
+h1 {
+    font-size: 20px;
+    padding: 0 20px 0 0;
+    margin-top: 6.5px;
+}
+
+h2 {
+    font-size: 1.2em;
+    padding: 0 0 0 0;
+}
+
+#config {
+    padding: 0.4em 0 10px 0px;
+    margin: 0 10px 0 0.1%;
+}
+
+#config label:after {
+    content: ":";
+}
+
+#project {
+    margin: 0 10px 0 0.1%;
+}
+
+#editor {
+    padding: 0 0 0 0;
+    margin: -20px 0 0 0;
+    background-color: #eee;
+    height: 70%;
+}
 
 .cm-editor {
-    text-align: left;
-    
+    text-align: left;    
+    border-color: #aaa;
     background-color: #fff;
-    padding-bottom: 20px;
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
 }
 
-.code-editor {
-    
-    width: 60%;
-    height: 40%;
-    padding-bottom: 20px;
+#code-editor {
+    clear:left;
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+    background-color: #ccc;
 }
 
-.read-the-docs {
-  color: #888;
+#eval_code {
+    margin-top: 0.85em;
+    margin-left: 20px; 
+}
+
+#editor_header {
+    float: left;
+    margin-left: 0.5%;
+}
+
+#documentation {
+    margin-top: -30px;
+    padding-left: 0.5%;
+    background-color: #dfc;
+    height: 30%;
+}
+
+.example-card {
+    float:left;
+    padding-left: 30px;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 0.3em 0.6em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
 }
+
 button:hover {
-  border-color: #646cff;
+    border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+    outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+    :root {
+	color: #213547;
+	background-color: #ffffff;
+    }
+    a:hover {
+	color: #747bff;
+    }
+    button {
+	background-color: #f9f9f9;
+    }
 }

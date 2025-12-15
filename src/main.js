@@ -16,26 +16,51 @@ import {_bassline} from  "./bassline.js"
 import imgUrl from './at-transparent.png'
 
 document.querySelector('#app').innerHTML = `
-  <div>    
-    <h1><img src="${imgUrl}" width="80px"></img> - patterns</h1>
-    <h2>Live-code with <a href="https://beta.audiotool.com">Audiotool</a>!</h2>
-    <div class="settings">      
-      <label for="project">Project</label>
-      <input type="text" id="project" name="project" size="40" value="">
+
+    
+    <div id="header">
+
+      <div id="headings">
+        <h1><img src="${imgUrl}" width="12px"></img> - patterns</h1>
+      </div>
+
+      <div id="config">      
+        <label for="project">Project ID</label>
+        <input type="text" id="project" name="project" size="40" value="">
+        <button id="setup_client" type="button">Connect</button>
+      </div>
+   
+    </div> 
+
+    <br/>
+
+    <div id="editor">
+      <h2 id="editor_header">Code Editor</h2>
+      <button id="eval_code" type="button">Evaluate Code</button>
+      <div id="code-editor"></div>     
     </div>
-    <div class="card">
-      <button id="setup_client" type="button">Connect</button>
-      <button id="eval_code" type="button">Eval Code</button>
+
+    <br/>
+
+    <div id="documentation">
+        <h2>Live-code with <a href="https://beta.audiotool.com">Audiotool</a>!</h2>
+        <div class="example-card">
+          <strong>Available devices:</strong>
+            <br><span class="code-example">pulv</span>
+            <br><span class="code-example">space</span>
+            <br><span class="code-example">heisenberg</span>
+            <br><span class="code-example">beatbox8</span>
+            <br><span class="code-example">bassline</span>
+        </div>
+        <div class="example-card">
+           <strong>Pattern Syntax</strong> (use capital letters for accent):<br>
+           o -> kick<br>
+           x -> snare<br>
+           c -> clap<br>
+           - -> pause<br>
+        </div>
     </div>
-    <h3>Read, Set, Code!!</h3>
-    <div id="code-editor"></div>
-    <div>Pattern Syntax (use capital letters for accent):<br>
-        o -> kick<br>
-        x -> snare<br>
-        c -> clap<br>
-        - -> pause<br>
-    </div>
-  </div>
+
 `
 
 // global state
@@ -63,7 +88,7 @@ const view = new EditorView({
 view.dispatch({changes: {
     from: 0,
     to: view.state.doc.length,
-    insert: 'beatbox8("hi").pattern("x-o-x-o-C-C-C-O-")'
+    insert: '// play a pattern on a beatbox8\nbeatbox8("hi").pattern("x-o-x-o-C-C-C-O-")\n\n// play some notes on a pulv\npulv("ha").preset("Trance Keys").notes("a4:4 c4:4 e4:4")\n\n'
 }})
 
 // setup buttons
