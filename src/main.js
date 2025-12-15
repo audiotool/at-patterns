@@ -15,9 +15,7 @@ import {_bassline} from  "./bassline.js"
 
 import imgUrl from './at-transparent.png'
 
-document.querySelector('#app').innerHTML = `
-
-    
+document.querySelector('#app').innerHTML = `    
     <div id="header">
 
       <div id="headings">
@@ -28,6 +26,8 @@ document.querySelector('#app').innerHTML = `
         <label for="project">Project ID</label>
         <input type="text" id="project" name="project" size="40" value="">
         <button id="setup_client" type="button">Connect</button>
+        <button id="login_button" type="button">Login</button>
+        <span id="login_status">Please connect to project!</span>
       </div>
    
     </div> 
@@ -44,7 +44,9 @@ document.querySelector('#app').innerHTML = `
 
     <div id="documentation">
         <h2>Live-code with <a href="https://beta.audiotool.com">Audiotool</a>!</h2>
-        <div class="example-card">
+<div class="example-card">
+</div>
+        <div class="example-card">        
           <strong>Available devices:</strong>
             <br><span class="code-example">pulv</span>
             <br><span class="code-example">space</span>
@@ -93,6 +95,7 @@ view.dispatch({changes: {
 // setup buttons
 document.querySelector('#setup_client').onclick = function() { setupClient(globals) }
 document.querySelector('#eval_code').onclick = async function(){ await evalCode() }
+
 
 // evaluate the code from the textarea
 async function evalCode() {
