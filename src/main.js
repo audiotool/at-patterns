@@ -16,33 +16,6 @@ import {_bassline} from  "./bassline.js"
 import imgUrl from './at-transparent.png'
 
 document.querySelector('#app').innerHTML = `
-
-    <script type="text/javascript">
-    // LANGUAGE FUNCTIONS
-
-    // DEVICES
-    function beatbox8(devName) {
-      return _beatbox8(devName, globals, devices, queues);
-    }
-
-    function pulv(devName) {
-      return _pulverisateur(devName, globals, devices, queues);
-    }
-
-    function heisenberg(devName) {
-      return _heisenberg(devName, globals, devices, queues);
-    }
-
-    function space(devName) {
-      return _space(devName, globals, devices, queues);
-    }
- 
-    function bassline(devName) {
-       return _bassline(devName, globals, devices, queues);
-    }
-
-    </script>
-
     <div id="header">
 
       <div id="headings">
@@ -129,7 +102,6 @@ view.dispatch({changes: {
 document.querySelector('#setup_client').onclick = function() { setupClient(globals) }
 document.querySelector('#eval_code').onclick = async function(){ await evalCode() }
 
-
 // evaluate the code from the textarea
 async function evalCode() {
     if (!globals.nexus) {
@@ -157,14 +129,25 @@ async function evalCode() {
     }
 }
 
+// LANGUAGE FUNCTIONS
 
+// DEVICES
+function beatbox8(devName) {
+    return _beatbox8(devName, globals, devices, queues);
+}
 
+function pulv(devName) {
+    return _pulverisateur(devName, globals, devices, queues);
+}
 
+function heisenberg(devName) {
+    return _heisenberg(devName, globals, devices, queues);
+}
 
+function space(devName) {
+    return _space(devName, globals, devices, queues);
+}
 
-
-
-
-
-
-
+function bassline(devName) {
+    return _bassline(devName, globals, devices, queues);
+}
