@@ -103,6 +103,29 @@ document.querySelector('#setup_client').onclick = function() { setupClient(globa
 document.querySelector('#eval_code').onclick = async function(){ await evalCode() }
 
 
+// LANGUAGE FUNCTIONS
+
+// DEVICES
+const beatbox8 = (devName) => {
+    return _beatbox8(devName, globals, devices, queues);
+}
+
+const pulv = (devName) => {
+    return _pulverisateur(devName, globals, devices, queues);
+}
+
+const heisenberg = (devName) => {
+    return _heisenberg(devName, globals, devices, queues);
+}
+
+const space = (devName) => {
+    return _space(devName, globals, devices, queues);
+}
+
+const bassline = (devName) => {
+    return _bassline(devName, globals, devices, queues);
+}
+
 // evaluate the code from the textarea
 async function evalCode() {
     if (!globals.nexus) {
@@ -130,28 +153,7 @@ async function evalCode() {
     }
 }
 
-// LANGUAGE FUNCTIONS
 
-// DEVICES
-function beatbox8(devName) {
-    return _beatbox8(devName, globals, devices, queues);
-}
-
-function pulv(devName) {
-    return _pulverisateur(devName, globals, devices, queues);
-}
-
-function heisenberg(devName) {
-    return _heisenberg(devName, globals, devices, queues);
-}
-
-function space(devName) {
-    return _space(devName, globals, devices, queues);
-}
-
-function bassline(devName) {
-    return _bassline(devName, globals, devices, queues);
-}
 
 
 
