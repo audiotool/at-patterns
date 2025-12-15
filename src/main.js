@@ -60,7 +60,6 @@ document.querySelector('#app').innerHTML = `
            - -> pause<br>
         </div>
     </div>
-
 `
 
 // global state
@@ -88,7 +87,7 @@ const view = new EditorView({
 view.dispatch({changes: {
     from: 0,
     to: view.state.doc.length,
-    insert: '// play a pattern on a beatbox8\nbeatbox8("hi").pattern("x-o-x-o-C-C-C-O-")\n\n// play some notes on a pulv\npulv("ha").preset("Trance Keys").notes("a4:4 c4:4 e4:4")\n\n'
+    insert: '// play a pattern on a beatbox8\nbeatbox8("hi").pattern("x-o-x-o-C-C-C-O-")\n\n// select a pulv preset and play some notes\npulv("ha").preset("Trance Keys").notes("a4:4 c4:4 e4:4 a4:4")\n\n'
 }})
 
 // setup buttons
