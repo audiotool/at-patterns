@@ -44,8 +44,14 @@ document.querySelector('#app').innerHTML = `
 
     <div id="documentation">
         <h2>Live-code with <a href="https://beta.audiotool.com">Audiotool</a>!</h2>
-<div class="example-card">
-</div>
+        <div class="example-card">
+            <strong>How to use:</strong>
+              <br>1.) Open empty project in Audiotool!
+              <br>2.) Enter project id above & connect (login if needed)!
+              <br>3.) Loop first bar of project & start playback!
+              <br>4.) Code!
+
+        </div>
         <div class="example-card">        
           <strong>Available devices:</strong>
             <br><span class="code-example">pulv</span>
