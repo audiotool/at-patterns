@@ -4,8 +4,5 @@ export default {
 	host: '127.0.0.1',	
 	port: 5173,
     },
-    base: '/at-patterns/',
-    build: {
-	minify: false,
-    }
+    base: '/at-patterns/',  
 }

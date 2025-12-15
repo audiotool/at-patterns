@@ -111,6 +111,7 @@ async function evalCode() {
     
     console.log("[at-patterns] eval code");
 
+    // yes yes I know, eval is evil ....
     eval(view.state.doc.toString());
 
     // execute the device updates
@@ -132,22 +133,22 @@ async function evalCode() {
 // LANGUAGE FUNCTIONS
 
 // DEVICES
-function beatbox8(devName) {
+globalThis.beatbox8 = (devName) => {
     return _beatbox8(devName, globals, devices, queues);
 }
 
-function pulv(devName) {
+globalThis.pulv = (devName) => {
     return _pulverisateur(devName, globals, devices, queues);
 }
 
-function heisenberg(devName) {
+globalThis.heisenberg = (devName) => {
     return _heisenberg(devName, globals, devices, queues);
 }
 
-function space(devName) {
+globalThis.space = (devName) => {
     return _space(devName, globals, devices, queues);
 }
 
-function bassline(devName) {
+globalThis.bassline = (devName) => {
     return _bassline(devName, globals, devices, queues);
 }
