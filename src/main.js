@@ -17,27 +17,27 @@ import imgUrl from './at-transparent.png'
 
 document.querySelector('#app').innerHTML = `
 
-    <script>
+    <script type="text/javascript">
     // LANGUAGE FUNCTIONS
 
     // DEVICES
-    const beatbox8 = (devName) => {
+    function beatbox8(devName) {
       return _beatbox8(devName, globals, devices, queues);
     }
 
-    const pulv = (devName) => {
+    function pulv(devName) {
       return _pulverisateur(devName, globals, devices, queues);
     }
 
-    const heisenberg = (devName) => {
+    function heisenberg(devName) {
       return _heisenberg(devName, globals, devices, queues);
     }
 
-    const space = (devName) => {
+    function space(devName) {
       return _space(devName, globals, devices, queues);
     }
  
-    const bassline = (devName) => {
+    function bassline(devName) {
        return _bassline(devName, globals, devices, queues);
     }
 
