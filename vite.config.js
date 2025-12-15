@@ -7,7 +7,7 @@ export default {
     base: '/at-patterns/',
     esbuild: {
 	pure: ['console.log'],    // example: have esbuild remove any console.log
-	minifyIdentifiers: false, // but keep variable names
+	keepNames: true,
     },
     build: {
 	minify: 'esbuild',
