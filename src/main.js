@@ -1,3 +1,5 @@
+import "@fontsource/mononoki";
+
 import './style.css'
 
 import {javascript} from "@codemirror/lang-javascript";
