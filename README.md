@@ -1,6 +1,7 @@
 # at-patterns - Live-Coding Audiotool with JavaScript
 
-Originally a contribution to our little, internal Nexus SDK hackathon.
+Originally a contribution to our little, internal Nexus SDK hackathon, written in simple, straight-forward
+JavaScript with no tricks.
 
 You can select presets and play notes, and play around with the sequences in a pattern-oriented manner.
 
@@ -17,7 +18,7 @@ because then we might be able to add time-based modifications (i.e. "every 2 bar
 * clone this repo
 * run `npm install @audiotool/nexus`
 * run `npm install` 
-* run `npm run dev` 
+* run `npm run dev` to run it locally
 
 ## Random Ideas:
 
