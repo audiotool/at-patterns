@@ -1,11 +1,9 @@
 import { createAudiotoolClient } from "@audiotool/nexus";
 import { createArrayTyped, getLoginStatus } from "@audiotool/nexus/utils";
 
-// setup the client
-export async function setupClient(globals) {
-    
+export async function checkLoginStatus(globals) {
     // Create client and set authentication
-    console.log("[at-patterns] setup client");
+    console.log("[at-patterns] check login");
 
     //var pat = document.getElementById('pat').value;
     var project = document.getElementById('project').value;
@@ -21,18 +19,32 @@ export async function setupClient(globals) {
     if (!status.loggedIn) {
 	console.log("[at-patterns] not logged in!");	
 	document.querySelector('#login_status').textContent = "Please log in!"
+	document.querySelector('#setup_client').disabled = true
+	document.querySelector('#project').disabled = true
 	document.querySelector('#login_button').onclick = function(){ status.login(); };
 	await new Promise(() => {}) // wait forever  
     } else {
 	console.log("[at-patterns] logged in!");
-	document.querySelector('#login_status').textContent = "Connected & Logged in!"
+	document.querySelector('#setup_client').disabled = false
+	document.querySelector('#login_button').disabled = true
+	document.querySelector('#login_status').textContent = "Logged in!"
     }
 
-    console.log("[at-patterns] setup client");
+    globals["status"] = status;
+}
+
+// setup the client
+export async function setupClient(globals) {
+    
+    // Create client and set authentication
+    console.log("[at-patterns] setup project");
+
+    //var pat = document.getElementById('pat').value;
+    var project = document.getElementById('project').value;
 
     // Create an audiotool client authorized with the current user
     globals["client"] = await createAudiotoolClient({
-	authorization: status
+	authorization: globals.status
     })
     
     console.log("[at-patterns] client ready!");
@@ -44,6 +56,8 @@ export async function setupClient(globals) {
     })
 
     console.log("[at-patterns] connected to project");
+
+    document.querySelector('#login_status').textContent = "Connected!"
     
     // Start syncing
     await globals.nexus.start()    

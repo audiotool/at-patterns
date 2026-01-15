@@ -6,7 +6,7 @@ import {javascript} from "@codemirror/lang-javascript";
 import {EditorView, basicSetup} from "codemirror";
 
 // client stuff
-import {setupClient} from "./client.js"
+import {setupClient, checkLoginStatus} from "./client.js"
 
 // device handling ...
 import {_beatbox8} from  "./beatbox8.js"
@@ -106,6 +106,9 @@ view.dispatch({changes: {
 // setup buttons
 document.querySelector('#setup_client').onclick = function() { setupClient(globals) }
 document.querySelector('#eval_code').onclick = async function(){ await evalCode() }
+
+// check login status
+window.onload = async function() { checkLoginStatus(globals); }
 
 // evaluate the code from the textarea
 async function evalCode() {
