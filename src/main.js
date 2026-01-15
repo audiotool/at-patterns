@@ -70,7 +70,7 @@ document.querySelector('#app').innerHTML = `
            - -> pause<br>
         </div>
     <div style="clear:left;padding-top:20px;"> 
-    (c) 2025 Audiotool Inc
+    (c) 2026 Audiotool Inc - <a href="https://github.com/audiotool/at-patterns">Source Code</a>
     </div>
     </div>
 `
