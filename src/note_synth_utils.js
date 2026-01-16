@@ -71,10 +71,13 @@ export async function updateSynthNotes(device, globals) {
 	device.transposeBy ?? 0,
 	device.durationModifier ?? 1,
     );
+
+    console.log("NOTE ENT");
+    console.log(noteEntities);
     
     await globals.nexus.modify((t) => { 
 	noteEntities.forEach((n) => {
-	    let nc = t.create("note", n);
+	    let nc = t.create("note", n);	    
 	    device.noteIds.push(nc.id);
 	})
     });
@@ -180,14 +183,14 @@ export function populateNoteSynth(device) {
 	return device;
     }
 
-    // twice as fast
+    // twice as slow
     device.halftime = function() {
 	device.durationModifier *= 2;
 	
 	return device;
     }
 
-    // twice as fast
+    // arbitrary factor on time
     device.modtime = function(fact) {
 	device.durationModifier *= fact;
 	
