@@ -71,9 +71,6 @@ export async function updateSynthNotes(device, globals) {
 	device.transposeBy ?? 0,
 	device.durationModifier ?? 1,
     );
-
-    console.log("NOTE ENT");
-    console.log(noteEntities);
     
     await globals.nexus.modify((t) => { 
 	noteEntities.forEach((n) => {
@@ -114,9 +111,12 @@ export function populateNoteSynth(device) {
 	device.noteString = "";
 	device.effectiveNoteString = null;
 	device.presetName = "";
-	device.transposeBy = 0;
+	device.transposeBy = 0;	
 	device.durationModifier = 1;
     }
+
+    // call reset function to populate defaults
+    device._reset();
     
     ///////////////////////////
     // SYNTH PRESET INTERFACE //
@@ -135,65 +135,63 @@ export function populateNoteSynth(device) {
     //////////////////////////
 
     device.notes = function(notes) {
-	device.noteString = notes;
-	
+	device.noteString = notes;	
 	// pass on device for function chaining
 	return device;
     }
 
     // reverse notes
     device.reverse = function() {	    
-	device.effectiveNoteString = reverse(device.effectiveNoteString ?? device.noteString, " ");	
-		
+	device.effectiveNoteString = reverse(device.effectiveNoteString ?? device.noteString, " ");
+	// pass on device for function chaining
 	return device;
     }
 
     // shift left
     device.lshift = function(n) {
 	device.effectiveNoteString = lshift(device.effectiveNoteString ?? device.noteString, " ", n);
-		
+	// pass on device for function chaining
 	return device;
     }
 
     // shift right
     device.rshift = function(n) {
-	device.effectiveNoteString = rshift(device.effectiveNoteString ?? device.noteString, " ", n);	
-		
+	device.effectiveNoteString = rshift(device.effectiveNoteString ?? device.noteString, " ", n);
+	// pass on device for function chaining
 	return device;
     }
 
     // transpose by semitones
     device.transpose = function(n) {
-	device.transposeBy = n;
-	
+	device.transposeBy = n;	
 	return device;
     }
 
     // create palindrome from pattern
     device.palindrome = function(n) {
-	device.effectiveNoteString = palindrome(device.effectiveNoteString ?? device.noteString, " ", n);	
-
+	device.effectiveNoteString = palindrome(device.effectiveNoteString ?? device.noteString, " ", n);
+	// pass on device for function chaining
 	return device;
     }
 
     // twice as fast
     device.doubletime = function() {
 	device.durationModifier *= 0.5;
-	
+	// pass on device for function chaining
 	return device;
     }
 
     // twice as slow
     device.halftime = function() {
 	device.durationModifier *= 2;
-	
+	// pass on device for function chaining
 	return device;
     }
 
     // arbitrary factor on time
     device.modtime = function(fact) {
 	device.durationModifier *= fact;
-	
+	// pass on device for function chaining
 	return device;
     }
 }

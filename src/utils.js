@@ -13,9 +13,9 @@ export function restDurationFromString(rest) {
 // c4:4 -> c, octave 4, quarter note 
 export function noteFromString(note) {
     var splitNote = note.split(":");
-
+    
     var duration = 15360 / parseInt(splitNote[1]);
-        
+
     var noteName = [];
     var octave = [];
 
@@ -29,6 +29,7 @@ export function noteFromString(note) {
 	    octave.push(splitFirst[i])
 	}
     }
+    
     var octaveNum;
     if (octave.length === 0) {
 	octaveNum = 4;
@@ -75,8 +76,6 @@ export function notesFromString(notes, location, transpose, durMod) {
 
     var noteEntities = [];
     var pos = 0;
-
-    console.log("DUR MOD" + durMod);
     
     singleNotes.forEach((n) => {
 	// rest
@@ -84,15 +83,11 @@ export function notesFromString(notes, location, transpose, durMod) {
 	    pos += restDurationFromString(n) * durMod;	    
 	} else {	    
 	    var noteEntity = noteFromString(n);
-	    console.log("SING NOTE PRE"):
-	    console.log(noteEntity);
 	    noteEntity.pitch = noteEntity.pitch + transpose;
 	    noteEntity.collection = location;
 	    noteEntity.positionTicks = pos;
 	    noteEntity.durationTicks = Math.floor(noteEntity.durationTicks * durMod);
 	    pos += noteEntity.durationTicks;
-	    console.log("SING NOTE POST"):
-	    console.log(noteEntity);
 	    noteEntities.push(noteEntity);
 	}
     })
