@@ -12,7 +12,7 @@
     "vite": "^7.1.2"
   },
   "dependencies": {
-    "@audiotool/nexus": "^0.0.6",
+    "@audiotool/nexus": "^0.0.8",
     "@codemirror/lang-javascript": "^6.2.4",
     "@fontsource/mononoki": "^5.2.5",
     "codemirror": "^6.0.2"
