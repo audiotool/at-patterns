@@ -75,18 +75,24 @@ export function notesFromString(notes, location, transpose, durMod) {
 
     var noteEntities = [];
     var pos = 0;
+
+    console.log("DUR MOD" + durMod);
     
     singleNotes.forEach((n) => {
 	// rest
 	if (n.startsWith("r")) {
 	    pos += restDurationFromString(n) * durMod;	    
-	} else {
-	    var noteEntity = noteFromString(n);	    
+	} else {	    
+	    var noteEntity = noteFromString(n);
+	    console.log("SING NOTE PRE"):
+	    console.log(noteEntity);
 	    noteEntity.pitch = noteEntity.pitch + transpose;
 	    noteEntity.collection = location;
 	    noteEntity.positionTicks = pos;
 	    noteEntity.durationTicks = Math.floor(noteEntity.durationTicks * durMod);
 	    pos += noteEntity.durationTicks;
+	    console.log("SING NOTE POST"):
+	    console.log(noteEntity);
 	    noteEntities.push(noteEntity);
 	}
     })
