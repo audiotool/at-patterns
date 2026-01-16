@@ -1,5 +1,4 @@
-import { createAudiotoolClient } from "@audiotool/nexus";
-import { createArrayTyped, getLoginStatus } from "@audiotool/nexus/utils";
+import { createAudiotoolClient, getLoginStatus } from "@audiotool/nexus";
 
 export async function checkLoginStatus(globals) {
     // Create client and set authentication
