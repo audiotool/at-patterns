@@ -57,7 +57,7 @@ document.querySelector('#app').innerHTML = `
         <div class="example-card">        
           <strong>Available devices:</strong>
             <br><span class="code-example">pulv</span>
-            <br><span class="code-example">space</span>
+            <br><span class="code-example">spaced</span> (notice the 'd' due to JS naming conflict)
             <br><span class="code-example">heisenberg</span>
             <br><span class="code-example">beatbox8</span>
             <br><span class="code-example">bassline</span>
@@ -153,7 +153,7 @@ globalThis.heisenberg = (devName) => {
     return _heisenberg(devName, globals, devices, queues);
 }
 
-globalThis.space = (devName) => {
+globalThis.spaced = (devName) => {
     return _space(devName, globals, devices, queues);
 }
 
