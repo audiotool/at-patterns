@@ -52,7 +52,7 @@ document.querySelector('#app').innerHTML = `
               <br>2.) Enter project id above & connect (login if needed)!
               <br>3.) Loop first bar of project & start playback!
               <br>4.) Code!<br><br>
-              <a href="https://github.com/audiotool/at-patterns/DOCUMENTATION.md">More documentation</a>
+              <a href="https://github.com/audiotool/at-patterns/blob/main/DOCUMENTATION.md">More documentation</a>
         </div>
         <div class="example-card">        
           <strong>Available devices:</strong>
