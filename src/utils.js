@@ -16,6 +16,8 @@ export function noteFromString(note) {
 
     var duration = 15360 / parseInt(splitNote[1]);
 
+    console.log("[at-patterns] DURATION " + duration);
+    
     var noteName = [];
     var octave = [];
 
@@ -62,7 +64,6 @@ export function noteFromString(note) {
     const noteNum = base * octaveNum + mod;
 
     return {
-	//noteCollection: noteCollection.location,
 	positionTicks: 0,
 	durationTicks: duration,
 	pitch: noteNum,
