@@ -96,7 +96,7 @@ async function clone_beatbox8(device, devices, queues, globals, cls) {
 	    return newDevice;
 	}
 
-	new_device._update = function() {
+	newDevice._update = function() {
 	    newQueue.push(_clone_update);
 	}
 	
