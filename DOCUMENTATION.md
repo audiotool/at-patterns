@@ -77,7 +77,12 @@ version of itself. The `clone` functions allows us to do this in **at-patterns**
 This will create another device of the same type and preset.
 
 ```javascript
-
+// create pulverisateur with name "hi"
+// select preset "Trance Keys"
+// play some notes
+// clone device
+// apply palidrome and double time to cloned device, also transpose an octave up.
+pulv("hi").preset("Trance Keys").notes("a4:4 c4:4 e4:4 a4:4").clone((p) => p.palindrome().doubletime().transpose(12))
 ```
 
 ## Available Functions:
